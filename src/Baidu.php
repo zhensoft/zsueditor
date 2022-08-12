@@ -1,0 +1,85 @@
+<?php
+// +----------------------------------------------------------------------
+// | 王磊 [ Programming makes me happy ]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2022 08 12  http://www.wlphp.com All rights reserved.
+// +----------------------------------------------------------------------
+// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
+// +----------------------------------------------------------------------
+// | Author: wl < 613154514@qq.com >
+// +----------------------------------------------------------------------
+
+namespace zs_ueditor;
+
+
+use think\console\Command;
+use think\console\Input;
+use think\console\input\Option;
+use think\console\Output;
+
+class Baidu extends Command
+{
+
+
+    protected function configure(){
+        $this->setName('baidu')
+             ->addOption('path', 'd', Option::VALUE_OPTIONAL, 'path to move', null)
+             ->addOption('config', null, Option::VALUE_OPTIONAL, 'config to init',null)
+             ->setDescription('move baidu`s ueditor and umeditor assets');
+             //->setDescription('迁移百度编辑器资源');
+    }
+
+
+    protected function execute(Input $input, Output $output){
+
+        if ($input->hasOption('config')) {
+            $src = __DIR__.'/'.'conf'.'/'.'ueditor.php';
+            $path = APP_PATH . 'extra' .'/'.'ueditor.php';
+            copy($src,$path);
+
+            $msrc = __DIR__.'/'.'conf'.'/'.'umeditor.php';
+            $mpath = APP_PATH . 'extra' .'/'.'umeditor.php';
+            copy($msrc,$mpath);
+            $output->writeln("<info>init Ueditor and UMeditor conf Successed</info>");
+            return;
+        }
+
+        $option = $input->getOption('path');
+        $path = $option ?: ROOT_PATH . 'public' . '/'.'static'.'/';
+
+        //不是根目录 放到默认目录下面的相对目录
+        if('/' !=  substr($option,0,1)){
+            $path =ROOT_PATH . 'public' . '/'.'static'.'/'.$option;
+        }
+
+        if (is_dir($path)) {
+            $src = __DIR__.'/'.'..'.'/'.'assets';
+            $this->moveAssets($src,$path);
+            $output->writeln("<info>move Ueditor assets Successed</info>"); //编辑器资源文件初始化成功
+        }else{
+            $output->writeln("<info>input path is not dir</info>");  //输入的路径不存在
+        }
+    }
+
+    /**
+     * 迁移百度编辑器静态资源
+     * @param @string $src  原来目录
+     * @param @string $path 目标目录
+     */
+    protected function moveAssets($src,$path){
+        $dir = opendir($src);
+        @mkdir($path);
+        while(false !== ( $file = readdir($dir)) ) {
+            if (( $file != '.' ) && ( $file != '..' )) {
+                if ( is_dir($src . '/' . $file) ) {
+                    $this->moveAssets($src . '/' . $file,$path . '/' . $file);
+                }
+                else {
+                    copy($src . '/' . $file,$path . '/' . $file);
+                }
+            }
+        }
+        closedir($dir);
+    }
+
+}
