@@ -14,10 +14,6 @@
 \think\Route::any('ueditor/[:id]', "\\zs_ueditor\\UeditorController@index");
 
 
-//百度精简版
-\think\Route::any('umeditor/[:id]', "\\zs_ueditor\\UMeditorController@index");
-
-
 
 
 
