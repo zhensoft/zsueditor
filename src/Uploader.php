@@ -10,7 +10,7 @@
 // | Author: wl < 613154514@qq.com >
 // +----------------------------------------------------------------------
 namespace zs_ueditor;
-use think\Db;
+
 	
 
 class Uploader
@@ -116,28 +116,18 @@ class Uploader
 
          //$remote_file=substr($this->fullName,1); //截取掉最开始的左斜杠
 		 
-		 
-		 
-		 
-		//重新定义上传到阿里云oss路径wl@20210310
-		$basekeynum = session( 'cn_accountinfo.basekeynum' );
-		$info = Db::table( 'plat_client' )->where( 'keynum', $basekeynum )->find();			 
-		 
-		 $pinfo = pathinfo($this->oriName);
-         $ftype = $pinfo['extension'];
-		 $imgname = create_guid() . "." . $ftype;
-		 $remote_file ='static/upload/'.$info['clientnum'].'/ueditor/images/' . date('Ym') . '/'. $imgname; //上传文件路径
-		 
-         //上传到阿里云oss
-         $arr=uploadFileToAliOss($file["tmp_name"],$remote_file);
-         if($arr['sta']!='1'){
-            $this->stateInfo =$arr['msg'];
+		
+		//重新定义上传到阿里云oss路径wl@20210310  
+        $rt_arr=ueditor_upload_file ( $file);
+        if($rt_arr['sta']!='1'){
+            $this->stateInfo = $rt_arr['msg'];
             return;
-         }
-         $file_remote_url=$arr['url'];
-
+        }
+        $file_remote_url=$rt_arr['url'];
+        //结束
          $this->stateInfo = $this->stateMap[0];
          $this->fullName=$file_remote_url;
+
 
          /*
         //创建目录失败
