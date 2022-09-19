@@ -3,7 +3,7 @@ The ThinkPHP5.0 ueditor for  zhensoft
 代码最小化，去掉了不用的工具栏以及百度ueditor 去掉多图上传在线管理等tab，支持图片到阿里云oss
 注意把src/helper.php 目录下面的两个函数去掉_copy放到你的的helper.php里面。
 ## 安装
-
+ 
 ### 一、执行命令安装
 
 安装
