@@ -270,22 +270,31 @@ class Uploader
         }
 
 
-        //复制别的网站上面的图片的bug，抓取远程图片
-		//重新定义上传到阿里云oss路径wl@20230630
-        $rt_arr=ueditor_upload_file ( $img);
-        if($rt_arr['sta']!='1'){
+
+        //临时文件操作，这样可以防止权限问题无法写入，以及删除不掉占用磁盘空间
+        $imageData = file_get_contents($imgUrl);
+        $tmpFile = tmpfile();
+        fwrite($tmpFile, $imageData);
+        $filePath = stream_get_meta_data($tmpFile)['uri'];
+        // 现在，你可以使用 $filePath 变量来访问临时文件的路径了
+        $rt_arr = ueditor_upload_file_from_local_path($filePath);
+        if ($rt_arr['sta'] != '1') {
+            fclose($tmpFile);
+            unlink($filePath);
             $this->stateInfo = $rt_arr['msg'];
             return;
         }
-        $file_remote_url=$rt_arr['url'];
+        $file_remote_url = $rt_arr['url'];
         //结束
-         $this->stateInfo = $this->stateMap[0];
-         $this->fullName=$file_remote_url;
+        $this->stateInfo = $this->stateMap[0];
+        $this->fullName = $file_remote_url;
+        // 记得在使用完临时文件后，及时删除它
+        fclose($tmpFile);
+        unlink($filePath);
+        return;
 
 
-
-
-        /*
+         /*
         //创建目录失败
         if (!file_exists($dirname) && !mkdir($dirname, 0777, true)) {
             $this->stateInfo = $this->getStateInfo("ERROR_CREATE_DIR");
@@ -299,7 +308,22 @@ class Uploader
         if (!(file_put_contents($this->filePath, $img) && file_exists($this->filePath))) { //移动失败
             $this->stateInfo = $this->getStateInfo("ERROR_WRITE_CONTENT");
         } else { //移动成功
+
+            //复制别的网站上面的图片的bug，抓取远程图片
+            //重新定义上传到阿里云oss路径wl@20230630
+            //var_dump($img);die;
+            //echo $imgUrl;die;
             $this->stateInfo = $this->stateMap[0];
+            $rt_arr = ueditor_upload_file_from_local_path($this->filePath);
+            unlink($this->filePath);
+            if ($rt_arr['sta'] != '1') {
+                $this->stateInfo = $rt_arr['msg'];
+                return;
+            }
+            $file_remote_url = $rt_arr['url'];
+            //结束
+            $this->stateInfo = $this->stateMap[0];
+            $this->fullName = $file_remote_url;
         }
         */
 

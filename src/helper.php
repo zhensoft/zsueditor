@@ -50,30 +50,79 @@ function getfiles($path, $allowFiles, &$files = array())
 
 
 
+
 /**
- * 文件上传方法，请把这个方法去掉copy,然后拷贝到helper.php。
+ * ueditor文件上传方法
  */
 
-function  ueditor_upload_file_copy($file)
-{
+ function  ueditor_upload_file_copy($file)
+ {
+     $basekeynum = session('cn_accountinfo.basekeynum');
+     $info = Db::table('plat_client')->where('keynum', $basekeynum)->find();
+     if(empty($info)){
+        $basekeynum = session('cn_accountinfo.parent_basekeynum');
+        $info = Db::table('plat_client')->where('keynum', $basekeynum)->find();
+        if(empty($info)){
+            $rt['sta'] = '0';
+            $rt['msg'] = "获取客户编号失败！";
+            return $rt;
+        }
+     }
+
+
+     $pinfo = pathinfo($file['name']);
+     $ftype = $pinfo['extension']?$pinfo['extension']:'jpg';
+     $imgname = create_guid() . "." . $ftype;
+     $remote_file = 'static/upload/' . $info['clientnum'] . '/ueditor/images/' . date('Ym') . '/' . $imgname; //上传文件路径
+     //上传到阿里云oss
+     $arr = uploadFileToAliOss($file["tmp_name"], $remote_file);
+     if ($arr['sta'] != '1') {
+         $rt['sta'] = '0';
+         $rt['msg'] = $arr['msg'];
+         return $rt;
+     }
+     $rt['sta'] = '1';
+     $rt['msg'] = "成功";
+     $rt['url'] =  $arr['url'];
+     return $rt;
+ }
+
+
+
+/**
+ * ueditor文件上传方法,本地文件上传后在删除
+ */
+
+ function  ueditor_upload_file_from_local_path_copy($local_path)
+ {
     $basekeynum = session('cn_accountinfo.basekeynum');
     $info = Db::table('plat_client')->where('keynum', $basekeynum)->find();
-    $pinfo = pathinfo($file['name']);
-    $ftype = $pinfo['extension'];
-    $imgname = create_guid() . "." . $ftype;
-    $remote_file = 'static/upload/' . $info['clientnum'] . '/ueditor/images/' . date('Ym') . '/' . $imgname; //上传文件路径
-    //上传到阿里云oss
-    $arr = uploadFileToAliOss($file["tmp_name"], $remote_file);
-    if ($arr['sta'] != '1') {
-        $rt['sta'] = '0';
-        $rt['msg'] = $arr['msg'];
-        return $rt;
+    if(empty($info)){
+       $basekeynum = session('cn_accountinfo.parent_basekeynum');
+       $info = Db::table('plat_client')->where('keynum', $basekeynum)->find();
+       if(empty($info)){
+           $rt['sta'] = '0';
+           $rt['msg'] = "获取客户编号失败！";
+           return $rt;
+       }
     }
-    $rt['sta'] = '1';
-    $rt['msg'] = "成功";
-    $rt['url'] =  $arr['url'];
-    return $rt;
-}
+    
+
+     $imgname = create_guid() . ".jpg";
+     $remote_file = 'static/upload/' . $info['clientnum'] . '/ueditor/images/' . date('Ym') . '/' . $imgname; //上传文件路径
+     //上传到阿里云oss
+     $arr = uploadFileToAliOss($local_path, $remote_file);
+     if ($arr['sta'] != '1') {
+         $rt['sta'] = '0';
+         $rt['msg'] = $arr['msg'];
+         return $rt;
+     }
+     $rt['sta'] = '1';
+     $rt['msg'] = "成功";
+     $rt['url'] =  $arr['url'];
+     return $rt;
+ }
+
 
 
 //文件上传到阿里云oss方法，请把这个方法去掉copy,然后拷贝到helper.php。
