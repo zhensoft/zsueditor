@@ -171,6 +171,11 @@ class Uploader
             return;
         }
 
+
+        $this->stateInfo ="不支持这种上传方式，请联系管理员！";
+        return;
+
+        /*
         //创建目录失败
         if (!file_exists($dirname) && !mkdir($dirname, 0777, true)) {
             $this->stateInfo = $this->getStateInfo("ERROR_CREATE_DIR");
@@ -186,6 +191,7 @@ class Uploader
         } else { //移动成功
             $this->stateInfo = $this->stateMap[0];
         }
+        */
 
     }
 
@@ -263,6 +269,23 @@ class Uploader
             return;
         }
 
+
+        //复制别的网站上面的图片的bug，抓取远程图片
+		//重新定义上传到阿里云oss路径wl@20230630
+        $rt_arr=ueditor_upload_file ( $img);
+        if($rt_arr['sta']!='1'){
+            $this->stateInfo = $rt_arr['msg'];
+            return;
+        }
+        $file_remote_url=$rt_arr['url'];
+        //结束
+         $this->stateInfo = $this->stateMap[0];
+         $this->fullName=$file_remote_url;
+
+
+
+
+        /*
         //创建目录失败
         if (!file_exists($dirname) && !mkdir($dirname, 0777, true)) {
             $this->stateInfo = $this->getStateInfo("ERROR_CREATE_DIR");
@@ -278,6 +301,7 @@ class Uploader
         } else { //移动成功
             $this->stateInfo = $this->stateMap[0];
         }
+        */
 
     }
 
