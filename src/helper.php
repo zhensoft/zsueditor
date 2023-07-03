@@ -52,7 +52,7 @@ function getfiles($path, $allowFiles, &$files = array())
 
 
 /**
- * ueditor文件上传方法
+ * ueditor文件上传方法 
  */
 
  function  ueditor_upload_file_copy($file)
