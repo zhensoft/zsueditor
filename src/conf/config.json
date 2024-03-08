@@ -5,7 +5,7 @@
             /* 执行上传图片的action名称 */
                     "imageFieldName": "upfile",
             /* 提交的图片表单名称 */
-                    "imageMaxSize": 1048576,
+                    "imageMaxSize": 2097152,
             /* 上传大小限制，单位B */
                     "imageAllowFiles": [".png", ".jpg", ".jpeg", ".gif", ".bmp"],
             /* 上传图片格式显示 */
@@ -39,7 +39,7 @@
             /* 提交的图片表单名称 */
                     "scrawlPathFormat": "/Upload/image/{yyyy}{mm}{dd}/{time}{rand:6}",
             /* 上传保存路径, 可以自定义保存路径和文件名格式 */
-                    "scrawlMaxSize": 1048576,
+                    "scrawlMaxSize": 2097152,
             /* 上传大小限制，单位B */
                     "scrawlUrlPrefix": "",
             /* 图片访问路径前缀 */
@@ -65,7 +65,7 @@
             /* 上传保存路径, 可以自定义保存路径和文件名格式 */
                     "catcherUrlPrefix": "",
             /* 图片访问路径前缀 */
-                    "catcherMaxSize": 1048576,
+                    "catcherMaxSize": 2097152,
             /* 上传大小限制，单位B */
                     "catcherAllowFiles": [".png", ".jpg", ".jpeg", ".gif", ".bmp"],
             /* 抓取图片格式显示 */
@@ -79,7 +79,7 @@
             /* 上传保存路径, 可以自定义保存路径和文件名格式 */
                     "videoUrlPrefix": "",
             /* 视频访问路径前缀 */
-                    "videoMaxSize": 1048576,
+                    "videoMaxSize": 2097152,
             /* 上传大小限制，单位B，默认100MB */
                     "videoAllowFiles": [
                         ".flv", ".swf", ".mkv", ".avi", ".rm", ".rmvb", ".mpeg", ".mpg",
@@ -95,7 +95,7 @@
             /* 上传保存路径, 可以自定义保存路径和文件名格式 */
                     "fileUrlPrefix": "",
             /* 文件访问路径前缀 */
-                    "fileMaxSize": 1048576,
+                    "fileMaxSize": 2097152,
             /* 上传大小限制，单位B，默认50MB */
                     "fileAllowFiles": [
                         ".png", ".jpg", ".jpeg", ".gif", ".bmp",
